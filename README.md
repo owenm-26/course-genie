@@ -20,3 +20,7 @@ A solution to minimizing the number of BU courses you have to take to fulfill HU
 
 ######
     python3.9 app.py
+
+## Resources
+
+[Geeks for Geeks](https://www.geeksforgeeks.org/flask-creating-first-simple-application/)
