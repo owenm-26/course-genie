@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 
+from scrape import fetch_and_write_response
+
 load_dotenv()
 app = Flask(__name__)
 
@@ -68,6 +70,11 @@ def create_tables():
         return 'Tables created successfully!'
     except Exception as e:
         return f'Failed to create tables: {str(e)}'
+
+@app.route('/scrape')
+def scrape_courses():
+    response = fetch_and_write_response()
+    return f'Did it work? {response}'
 
 @app.route('/health')
 def health():
