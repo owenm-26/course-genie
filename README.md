@@ -15,6 +15,9 @@ A solution to minimizing the number of BU courses you have to take to fulfill HU
 
 ######
     pip install Flask
+    pip install python-dotenv
+    pip install psycopg2
+    pip install flask_sqlalchemy
 
 ## Running code
 
