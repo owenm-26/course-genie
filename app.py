@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect, text
 from dotenv import load_dotenv
 import os
 from flask_migrate import Migrate
@@ -103,9 +104,8 @@ def create_tables():
 
 @app.route('/scrape')
 def scrape_courses():
-    # response = fetch_and_write_response()
-    response = 'fake'
-    return f'Did it work? {response}'
+    response = fetch_and_write_response()
+    return f'Did it work? {response["status"]}'
 
 @app.route('/write')
 def write_courses():
@@ -117,6 +117,24 @@ def write_courses():
     else:
         return 'ERROR SCRAPING'
     
+@app.route('/table/<table>')
+def see_table(table):
+    inspector = inspect(db.engine)
+    
+    # Check if the table exists
+    if table not in inspector.get_table_names():
+        abort(404, description=f"Table '{table}' not found")
+
+    # Query the table
+    try:
+        query = text(f"SELECT * FROM {table}")
+        result = db.session.execute(query)
+        columns = result.keys()
+        data = [dict(zip(columns, row)) for row in result.fetchall()]
+    except Exception as e:
+        abort(500, description=f"Error querying table '{table}': {str(e)}")
+
+    return jsonify(data)
 
 @app.route('/health')
 def health():
