@@ -23,4 +23,5 @@ A solution to minimizing the number of BU courses you have to take to fulfill HU
 
 ## Resources
 
-[Geeks for Geeks](https://www.geeksforgeeks.org/flask-creating-first-simple-application/)
+[Geeks for Geeks](https://www.geeksforgeeks.org/flask-creating-first-simple-application/) <br/>
+[Access to 127.0.0.1 was denied](chrome://net-internals/#sockets)
