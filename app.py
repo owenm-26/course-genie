@@ -109,9 +109,11 @@ def scrape_courses():
 
 @app.route('/write')
 def write_courses():
+    from write_courses import write_courses as wc
+    
     result = fetch_and_write_response()
     if(result['status'] == 200):
-        return write_courses(result["body"])
+        return wc(result["body"])
     else:
         return 'ERROR SCRAPING'
     
