@@ -1,9 +1,11 @@
 from ortools.sat.python import cp_model
 
+
 def contains_invalid_characters(s):
     return not set(s).issubset({'0', '1'})
 
-def solver(maxCredits, hubString):
+
+def solver(maxCredits, hubString, courses):
     # Verify Inputs
     if maxCredits == None or hubString == None:
         print(f"Inputs are not both defined {maxCredits}, {hubString}")
@@ -18,12 +20,12 @@ def solver(maxCredits, hubString):
     # Initialize the CP-SAT model
     model = cp_model.CpModel()
 
-    # Example data
-    courses = [
-        {'id': 1, 'name': 'Course 1', 'start_time': 9, 'end_time': 10, 'credits': 3, 'hub_credits': '1010100000000000'},
-        {'id': 2, 'name': 'Course 2', 'start_time': 10, 'end_time': 11, 'credits': 3, 'hub_credits': '0100000000000000'},
-        # Add more courses with start_time, end_time, credits, and hub_credits
-    ]
+    # # Example data
+    # courses = [
+    #     {'id': 1, 'name': 'Course 1', 'start_time': 9, 'end_time': 10, 'credits': 3, 'hub_credits': '1010100000000000'},
+    #     {'id': 2, 'name': 'Course 2', 'start_time': 10, 'end_time': 11, 'credits': 3, 'hub_credits': '0100000000000000'},
+    #     # Add more courses with start_time, end_time, credits, and hub_credits
+    # ]
 
     num_hub_credits = len(hubString)
 
