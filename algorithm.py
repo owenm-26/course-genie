@@ -55,14 +55,24 @@ def solver(maxCredits, hubString):
     solver = cp_model.CpSolver()
     status = solver.Solve(model)
 
+    selectedCourses = []
+    netHubCredits = 0
+    creditsUsed = 0
+
     if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-        print('Selected courses:')
+        
         for i, course in enumerate(courses):
             if solver.BooleanValue(course_vars[i]):
-                print(course['name'])
-        print('Total HUB credits:', solver.ObjectiveValue())
+                
+                creditsUsed += course["credits"]
+                selectedCourses.append(course)
+        netHubCredits = solver.ObjectiveValue()
     else:
         print('No feasible solution found.')
+    
+    return {'Solution':selectedCourses, 
+            'Credits Used': creditsUsed,
+            'Net Hub Credits': netHubCredits}
 
 if __name__ == "__main__":
     maxCredits = 3

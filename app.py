@@ -6,6 +6,7 @@ import os
 from flask_migrate import Migrate
 
 from helpers.scrape import fetch_and_write_response
+from algorithm import solver
 # from write_courses import write_courses
 
 # Configure the PostgreSQL database connection
@@ -136,9 +137,14 @@ def see_table(table):
 
     return jsonify(data)
 
+@app.route('/solve/<int:maxCredits>/<hubString>')
+def solve(maxCredits, hubString):
+    return solver(maxCredits=maxCredits, hubString=hubString)
+
 @app.route('/health')
 def health():
     return f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}"
 
 if __name__ == '__main__':
     app.run(debug=True)
+
