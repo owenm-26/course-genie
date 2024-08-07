@@ -13,14 +13,14 @@ import { FormService } from '../form.service';
       <input type="email" id="email" [(ngModel)]="formData.email" name="email" required>
 
       <label for="numCredits">Number of HUB credits desired:</label>
-      <select [(ngModel)]="formData.numCredits">
+      <select [(ngModel)]="formData.numCredits" name="numCredits">
         @for(val of creditOptions; track val) {
           <option value={{val}}>{{ val }}</option>
         }
       </select>
 
       <label for="desiredHubs">Choose the HUBs you need:</label>
-      <select [(ngModel)]="formData.desiredHubs" multiple>
+      <select multiple [(ngModel)]="formData.desiredHubs" name="desiredHubs">
         @for(hub of hubOptions; track hub) {
           <option value={{hub}}>{{ hub }}</option>
         }
