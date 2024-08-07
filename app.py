@@ -38,7 +38,7 @@ def create_tables():
 @app.route('/scrape')
 def scrape_courses():
     response = fetch_and_write_response()
-    return f'Did it work? {response["status"]}'
+    return f'Did it work? {response["status"]}{response["body"]}'
 
 @app.route('/write')
 def write_courses():

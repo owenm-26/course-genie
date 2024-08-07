@@ -4,6 +4,7 @@ from sqlalchemy import null
 from app import db, app  
 from models import HubCredits, Course
 from helpers.scrape import fetch_and_write_response
+from datetime import datetime
 
 # helper to map hub credits
 def map_hub_credits(crse_attr_value):
@@ -60,6 +61,22 @@ def map_hub_credits(crse_attr_value):
 
     return hub_credits
 
+def convertToLegibleTime(start_time):
+
+    if len(start_time) == 0:
+        return 'Undecided'
+    # Define the format of the input time string
+    input_format = '%H.%M.%S.%f%z'
+    
+    # Parse the input time string to a datetime object using the correct method
+    dt = datetime.strptime(start_time, input_format)
+    
+    # Convert the datetime object to the desired output format
+    output_format = '%I:%M %p'
+    american_time = dt.strftime(output_format)
+    
+    return american_time
+
 def write_courses(courses):
     course_instances = []
     hub_credit_instances = {}
@@ -70,13 +87,24 @@ def write_courses(courses):
         db.create_all()
         
         for course in courses:
+            if len(course["meetings"]) == 0 or len(course['crse_attr']) == 0:
+                continue
+          
             course_name = course['descr']
             catalog_number = course['catalog_nbr']
             class_section = course['class_section']
-            start_dt = datetime.strptime(course['start_dt'], "%m/%d/%Y")
+            start_time = convertToLegibleTime(course['meetings'][0]['start_time'])
+            end_time = convertToLegibleTime(course['meetings'][0]['end_time'])
+            instructor = course['meetings'][0]['instructor']
+
             lab_parent_id = None
             discussion_parent_id = None
             schedule_id = None
+
+            if 'bldg_cd' in course['meetings'][0]:
+                class_room = course['meetings'][0]['bldg_cd'] + ' ' + course['meetings'][0]['room']
+            else:
+                class_room = 'Undecided'
 
             hub_credits_dict = map_hub_credits(course["crse_attr_value"])
 
@@ -105,7 +133,10 @@ def write_courses(courses):
                 course_name=course_name,
                 catalog_number=catalog_number,
                 class_section=class_section,
-                time=start_dt,
+                start_time= start_time,
+                end_time = end_time,
+                instructor = instructor,
+                class_room = class_room,
                 lab_parent_id=lab_parent_id,
                 discussion_parent_id=discussion_parent_id,
                 schedule_id=schedule_id,

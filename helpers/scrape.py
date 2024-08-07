@@ -151,7 +151,7 @@ def fetch_and_write_response():
         file.write(response.content)
     
     json_str = response.content.decode('utf-8')
-    data = json.loads(json_str)
+    data = json.loads(json_str) 
     return ({"status": response.status_code, "body":data})
 
 fetch_and_write_response()

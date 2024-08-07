@@ -7,8 +7,11 @@ class Course(db.Model):
     course_name = db.Column(db.String(80), nullable=False)
     catalog_number = db.Column(db.String(80), nullable=False)
     class_section = db.Column(db.String(80), nullable=False)
-    time = db.Column(db.DateTime, nullable=False)
-    
+    start_time = db.Column(db.String(80), nullable=False)
+    end_time = db.Column(db.String(80), nullable=False)
+    class_room = db.Column(db.String(80), nullable = True)
+    instructor = db.Column(db.String(80), nullable = False)
+
     lab_parent_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     discussion_parent_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
 
@@ -18,11 +21,14 @@ class Course(db.Model):
     labs = db.relationship('Course', backref=db.backref('lab_parent', remote_side=[id]), foreign_keys=[lab_parent_id])
     discussions = db.relationship('Course', backref=db.backref('discussion_parent', remote_side=[id]), foreign_keys=[discussion_parent_id])
 
-    def __init__(self, course_name, catalog_number, class_section, time, lab_parent_id, discussion_parent_id, schedule_id, hub_credits_id) -> None:
+    def __init__(self, course_name, catalog_number, class_section, start_time, end_time, instructor, class_room, lab_parent_id, discussion_parent_id, schedule_id, hub_credits_id) -> None:
         self.course_name = course_name
         self.catalog_number = catalog_number
         self.class_section = class_section
-        self.time = time
+        self.start_time = start_time
+        self.end_time = end_time
+        self.instructor = instructor
+        self.class_room = class_room
         self.lab_parent_id = lab_parent_id
         self.discussion_parent_id = discussion_parent_id
         self.schedule_id = schedule_id
