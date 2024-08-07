@@ -13,7 +13,7 @@ class Course(db.Model):
     discussion_parent_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
 
     schedule_id = db.Column(db.Integer, db.ForeignKey('schedules.id'))
-    hub_credits_id = db.Column(db.Integer, db.ForeignKey('hub_credits.id'))
+    hub_credits_id = db.Column(db.Integer, db.ForeignKey('hub_credits.id'), nullable=False)
 
     labs = db.relationship('Course', backref=db.backref('lab_parent', remote_side=[id]), foreign_keys=[lab_parent_id])
     discussions = db.relationship('Course', backref=db.backref('discussion_parent', remote_side=[id]), foreign_keys=[discussion_parent_id])
