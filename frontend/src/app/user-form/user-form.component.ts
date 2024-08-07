@@ -7,7 +7,7 @@ import { FormService } from '../form.service';
   styleUrls: ['./user-form.component.css']
 })
 export class UserFormComponent {
-  formData = { name: '', email: '' , numCredits: ''};
+  formData = { name: '', email: '' , numCredits: '', desiredHubs: ''};
   // desiredHubs = new FormControl('');
   hubOptions: string[] = ['Aesthetic Exploration', 'Creativity/Innovation', 'Critical Thinking', 'Digitial/Multimedia', 
   'Ethical Reasoning', 'First-Year Writing Seminar', 'Global Citizenship', 'Historical Consciousness', 'Oral/Signed Communication',
