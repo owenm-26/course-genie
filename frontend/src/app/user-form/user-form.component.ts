@@ -3,31 +3,40 @@ import { FormService } from '../form.service';
 
 @Component({
   selector: 'app-user-form',
-  // templateUrl: './user-form.component.html',
   template: `
-    <form (ngSubmit)="onSubmit()">
-      <label for="name">Name:</label>
-      <input type="text" id="name" [(ngModel)]="formData.name" name="name" required>
+    <div class="form-container">
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" [(ngModel)]="formData.name" name="name" required>
+        </div>
 
-      <label for="email">Email:</label>
-      <input type="email" id="email" [(ngModel)]="formData.email" name="email" required>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" [(ngModel)]="formData.email" name="email" required>
+        </div>
 
-      <label for="numCredits">Number of HUB credits desired:</label>
-      <select [(ngModel)]="formData.numCredits" name="numCredits">
-        @for(val of creditOptions; track val) {
-          <option value={{val}}>{{ val }}</option>
-        }
-      </select>
+        <div class="form-group">
+          <label for="numCredits">Number of HUB credits desired:</label>
+          <select [(ngModel)]="formData.numCredits" name="numCredits">
+            @for(val of creditOptions; track val) {
+              <option value={{val}}>{{ val }}</option>
+            }
+          </select>
+        </div>
 
-      <label for="desiredHubs">Choose the HUBs you need:</label>
-      <select multiple [(ngModel)]="formData.desiredHubs" name="desiredHubs">
-        @for(hub of hubOptions; track hub) {
-          <option value={{hub}}>{{ hub }}</option>
-        }
-      </select>
+        <div class="form-group">
+          <label for="desiredHubs">Choose the HUBs you need:</label>
+          <select multiple [(ngModel)]="formData.desiredHubs" name="desiredHubs">
+            @for(hub of hubOptions; track hub) {
+              <option value={{hub}}>{{ hub }}</option>
+            }
+          </select>
+        </div>
 
-      <button type="submit">Submit</button>
-    </form>
+        <button type="submit" class="submit-button">Submit</button>
+      </form>
+    </div>
   `,
   styleUrls: ['./user-form.component.css']
 })
