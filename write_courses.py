@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import null
 from app import db, app  
-from models import HubCredits, Course
+from models import HubCredits, Course, Schedule
 from helpers.scrape import fetch_and_write_response
 from datetime import datetime
 
@@ -61,6 +61,34 @@ def map_hub_credits(crse_attr_value):
 
     return hub_credits
 
+def map_schedule(rawSchedule):
+    schedule = {
+        'monday': False,
+        'tuesday': False,
+        'wednesday': False,
+        'thursday': False,
+        'friday': False,
+        'saturday': False,
+        'sunday': False
+    }
+    if rawSchedule == 'TBA':
+        return schedule
+    if 'Mo' in rawSchedule:
+        schedule['monday'] = True
+    if 'Tu' in rawSchedule:
+        schedule['tuesday'] = True
+    if 'We' in rawSchedule:
+        schedule['wednesday'] = True
+    if 'Th' in rawSchedule:
+        schedule['thursday'] = True
+    if 'Fr' in rawSchedule:
+        schedule['friday'] = True
+    if 'Sa' in rawSchedule:
+        schedule['saturday'] = True
+    if 'Su' in rawSchedule:
+        schedule['sunday'] = True
+    return schedule
+
 def convertToLegibleTime(start_time):
 
     if len(start_time) == 0:
@@ -80,6 +108,7 @@ def convertToLegibleTime(start_time):
 def write_courses(courses):
     course_instances = []
     hub_credit_instances = {}
+    schedule_instances = {}
 
     with app.app_context():
         # start fresh
@@ -99,13 +128,13 @@ def write_courses(courses):
 
             lab_parent_id = None
             discussion_parent_id = None
-            schedule_id = None
 
             if 'bldg_cd' in course['meetings'][0]:
                 class_room = course['meetings'][0]['bldg_cd'] + ' ' + course['meetings'][0]['room']
             else:
                 class_room = 'Undecided'
 
+            # CREATE HUB CREDITS RELATION
             hub_credits_dict = map_hub_credits(course["crse_attr_value"])
 
             # Create a unique key for each HubCredits instance
@@ -128,6 +157,29 @@ def write_courses(courses):
 
             print(f'Creating course with hub_credits_id: {hub_credit_instance.id}')
 
+            # CREATE SCHEDULE RELATION
+            schedule_dict = map_schedule(course["meetings"][0]['days'])
+
+            # Create a unique key for each HubCredits instance
+            schedule_key = tuple(schedule_dict.items())
+
+            if schedule_key not in schedule_instances:
+                schedule_instance = Schedule(**schedule_dict)
+                db.session.add(schedule_instance)
+                db.session.commit()
+
+                # Retrieve the committed instance to ensure we have the ID
+                schedule_instance = Schedule.query.filter_by(**schedule_dict).first()
+                if schedule_instance:
+                    schedule_instances[schedule_key] = schedule_instance
+                else:
+                    print(f'Error: HubCredits instance not found after commit for key: {schedule_key}')
+                    continue
+            else:
+                schedule_instance = schedule_instances[schedule_key]
+
+            print(f'Creating course with hub_credits_id: {schedule_instance.id}')
+
             # Create Course instance with the valid hub_credits_id
             course_instance = Course(
                 course_name=course_name,
@@ -139,7 +191,7 @@ def write_courses(courses):
                 class_room = class_room,
                 lab_parent_id=lab_parent_id,
                 discussion_parent_id=discussion_parent_id,
-                schedule_id=schedule_id,
+                schedule_id=schedule_instance.id,
                 hub_credits_id=hub_credit_instance.id
             )
             if course_instance.hub_credits_id != null:
