@@ -114,9 +114,11 @@ def write_courses(courses):
         # start fresh
         db.drop_all()
         db.create_all()
+        skipped_courses = 0
         
         for course in courses:
-            if len(course["meetings"]) == 0 or len(course['crse_attr']) == 0:
+            if len(course["meetings"]) == 0 or len(course['crse_attr']) == 0 or len(course['meetings'][0]) == 0:
+                skipped_courses +=1
                 continue
           
             course_name = course['descr']
@@ -156,7 +158,7 @@ def write_courses(courses):
             else:
                 hub_credit_instance = hub_credit_instances[hub_credits_key]
 
-            print(f'Creating course with hub_credits_id: {hub_credit_instance.id}')
+            # print(f'Creating course with hub_credits_id: {hub_credit_instance.id}')
 
             # CREATE SCHEDULE RELATION
             schedule_dict = map_schedule(course["meetings"][0]['days'])
@@ -179,7 +181,7 @@ def write_courses(courses):
             else:
                 schedule_instance = schedule_instances[schedule_key]
 
-            print(f'Creating course with hub_credits_id: {schedule_instance.id}')
+            # print(f'Creating course with hub_credits_id: {schedule_instance.id}')
 
             # Create Course instance with the valid hub_credits_id
             course_instance = Course(
@@ -202,7 +204,7 @@ def write_courses(courses):
         try:
             db.session.add_all(course_instances)
             db.session.commit()
-            return f'{len(course_instances)} Courses written to the database successfully!'
+            return f'{len(course_instances)} Courses written to the database successfully! {skipped_courses} Courses skipped!'
         except Exception as e:
             db.session.rollback()
             return f'Failed to write courses to the database: {str(e)}'

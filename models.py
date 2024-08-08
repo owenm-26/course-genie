@@ -17,7 +17,10 @@ class Course(db.Model):
     discussion_parent_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
 
     schedule_id = db.Column(db.Integer, db.ForeignKey('schedules.id'))
+    schedule = db.relationship('Schedule', backref='schedule_courses')
+
     hub_credits_id = db.Column(db.Integer, db.ForeignKey('hub_credits.id'), nullable=False)
+    # hub_credits = db.relationship('HubCredits', backref='courses')  # Ensure relationship is defined
 
     labs = db.relationship('Course', backref=db.backref('lab_parent', remote_side=[id]), foreign_keys=[lab_parent_id])
     discussions = db.relationship('Course', backref=db.backref('discussion_parent', remote_side=[id]), foreign_keys=[discussion_parent_id])
@@ -60,7 +63,7 @@ class Schedule(db.Model):
     saturday = db.Column(db.Boolean, nullable=False)
     sunday = db.Column(db.Boolean, nullable=False)
 
-    courses = db.relationship('Course', backref='schedule')
+    # courses = db.relationship('Course', backref='schedule')
 
 class HubCredits(db.Model):
     __tablename__ = 'hub_credits'
