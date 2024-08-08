@@ -6,7 +6,7 @@ import os
 from flask_migrate import Migrate
 
 from helpers.scrape import fetch_and_write_response
-from algorithm import solver
+from helpers.algorithm import solver
 
 # Initialize SQLAlchemy and Migrate globally
 db = SQLAlchemy()
@@ -38,12 +38,11 @@ def create_tables():
 @app.route('/scrape')
 def scrape_courses():
     response = fetch_and_write_response()
-    return response["body"]
     return f'Did it work? {response["status"]}{response["body"]}'
 
 @app.route('/write')
 def write_courses():
-    from write_courses import write_courses as wc
+    from helpers.write_courses import write_courses as wc
     with app.app_context():
         result = fetch_and_write_response()
         if result['status'] == 200:

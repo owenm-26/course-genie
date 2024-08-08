@@ -1,6 +1,7 @@
 import requests
 import json
 
+# you will need to update these cookies/params/etc. regularly
 def fetch_and_write_response():
 
     cookies = {
@@ -148,8 +149,9 @@ def fetch_and_write_response():
         print('FAILED, please log in')
         return ({"status": 405, "body": 'FAILED, please log in'})
     
-    with open('open_courses.txt', 'wb') as file:
-        file.write(response.content)
+    ### Uncomment to write to local file
+    # with open('open_courses.txt', 'wb') as file:
+    #     file.write(response.content)
     
     json_str = response.content.decode('utf-8')
     data = json.loads(json_str) 
