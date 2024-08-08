@@ -125,6 +125,7 @@ def write_courses(courses):
             start_time = convertToLegibleTime(course['meetings'][0]['start_time'])
             end_time = convertToLegibleTime(course['meetings'][0]['end_time'])
             instructor = course['meetings'][0]['instructor']
+            credits = course['units']
 
             lab_parent_id = None
             discussion_parent_id = None
@@ -192,7 +193,8 @@ def write_courses(courses):
                 lab_parent_id=lab_parent_id,
                 discussion_parent_id=discussion_parent_id,
                 schedule_id=schedule_instance.id,
-                hub_credits_id=hub_credit_instance.id
+                hub_credits_id=hub_credit_instance.id,
+                credits=credits
             )
             if course_instance.hub_credits_id != null:
                 course_instances.append(course_instance)

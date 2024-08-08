@@ -1,8 +1,17 @@
 from ortools.sat.python import cp_model
 
 
+
 def contains_invalid_characters(s):
     return not set(s).issubset({'0', '1'})
+
+def get_course_schedule(course):
+    if course:
+        schedule = course.schedule
+        return [schedule.monday, schedule.tuesday, schedule.wednesday,
+                schedule.thursday, schedule.friday, schedule.saturday, 
+                schedule.sunday]
+    return [False] * 7
 
 
 def solver(maxCredits, hubString, courses):
@@ -20,24 +29,20 @@ def solver(maxCredits, hubString, courses):
     # Initialize the CP-SAT model
     model = cp_model.CpModel()
 
-    # # Example data
-    # courses = [
-    #     {'id': 1, 'name': 'Course 1', 'start_time': 9, 'end_time': 10, 'credits': 3, 'hub_credits': '1010100000000000'},
-    #     {'id': 2, 'name': 'Course 2', 'start_time': 10, 'end_time': 11, 'credits': 3, 'hub_credits': '0100000000000000'},
-    #     # Add more courses with start_time, end_time, credits, and hub_credits
-    # ]
-
     num_hub_credits = len(hubString)
 
     # Create a binary variable for each course
     course_vars = []
     for course in courses:
-        course_vars.append(model.NewBoolVar(course['name']))
+        course_vars.append(model.NewBoolVar(course['course_name']))
 
     # Constraint: No overlapping classes
     for i in range(len(courses)):
+        schedule_i = get_course_schedule(courses[i])
         for j in range(i + 1, len(courses)):
-            if courses[i]['end_time'] > courses[j]['start_time'] and courses[i]['start_time'] < courses[j]['end_time']:
+            schedule_j = get_course_schedule(courses[j])
+            same_day = any(schedule_i[day] and schedule_j[day] for day in range(7))
+            if not same_day or same_day and courses[i]['end_time'] > courses[j]['start_time'] and courses[i]['start_time'] < courses[j]['end_time']:
                 model.Add(course_vars[i] + course_vars[j] <= 1)
     
     # Constraint: Total credits should not exceed maxCredits
