@@ -30,6 +30,7 @@ You must use two separate terminals so you can run the frontend in one and the b
 ######
 
     python3.9 app.py
+    cd frontend
     ng serve
 
 ## Database interactions
