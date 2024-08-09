@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormService } from '../form.service';
 
 @Component({
@@ -41,8 +41,9 @@ import { FormService } from '../form.service';
   styleUrls: ['./user-form.component.css']
 })
 export class UserFormComponent {
+  @Output() formSubmitted = new EventEmitter<boolean>();  // New EventEmitter to notify form submission
+
   formData = { name: '', email: '' , numCredits: '', desiredHubs: ''};
-  // desiredHubs = new FormControl('');
   hubOptions: string[] = ['Aesthetic Exploration', 'Creativity/Innovation', 'Critical Thinking', 'Digitial/Multimedia', 
   'Ethical Reasoning', 'First-Year Writing Seminar', 'Global Citizenship', 'Historical Consciousness', 'Oral/Signed Communication',
   'Philosophical Inquiry', 'Quantitative Reasoning I', 'Quantitative Reasoning II', 'Research and Information', 'Scientific Inquiry I',
@@ -55,6 +56,7 @@ export class UserFormComponent {
     this.formService.submitForm(this.formData)
       .subscribe(response => {
         console.log('Server response:', response);
+        this.formSubmitted.emit(true);  // Emit the event when the form is submitted
       }, error => {
         console.error('Error:', error);
       });
