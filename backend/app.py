@@ -1,9 +1,10 @@
-from flask import Flask, jsonify, abort
+from flask import Flask, jsonify, abort, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect, text
 from dotenv import load_dotenv
 import os
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 from helpers.scrape import fetch_and_write_response
 from helpers.algorithm import solver
@@ -17,9 +18,12 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
+
+
+CORS(app)
 db.init_app(app)
 migrate.init_app(app, db)
+
 
 
 @app.route('/')
@@ -78,6 +82,12 @@ def solve(maxCredits, hubString):
 def health():
     return f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}"
 
+@app.route('/api/form', methods=['POST'])
+def handle_form():
+    data = request.get_json()
+    # Process the data
+    print("==============>", data)
+    return jsonify({"status": "success", "data": data})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
