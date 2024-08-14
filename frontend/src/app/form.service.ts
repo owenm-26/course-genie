@@ -25,7 +25,7 @@ export class FormService {
 
   submitForm(data: any): Observable<any> {
     const apiSolveUrl = `${this.apiSolveBaseUrl}/${data.numCredits}/${data.desiredHubs}`;
-    return this.http.get(apiSolveUrl);
+    return this.http.get<any>(apiSolveUrl);
     // return this.http.post(this.apiUrl, data)
   }
 }
