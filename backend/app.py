@@ -78,6 +78,14 @@ def solve(maxCredits, hubString):
     courses = see_table('courses').get_json()
     return solver(maxCredits=maxCredits, hubString=hubString, courses=courses)
 
+# actual api route for setting up all the backend and database support and then solving
+@app.route('/api/setupsolve/<int:maxCredits>/<hubString>')
+def setupsolve(maxCredits, hubString):
+    # other setup steps necessary for the backend before calling solve
+    write_courses()
+    return solve(maxCredits, hubString)
+
+# check the database URI connection
 @app.route('/health')
 def health():
     return f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}"

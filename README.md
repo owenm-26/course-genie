@@ -20,7 +20,8 @@ A solution to minimizing the number of BU courses you have to take to fulfill HU
     pip install python-dotenv
     pip install psycopg2
     pip install flask_sqlalchemy
-    pip install flask-cors
+    pip install ortools
+    pip install flask_cors
     npm install -g @angular/cli
 
 ## Running code
@@ -49,6 +50,14 @@ You must use two separate terminals so you can run the frontend in one and the b
 ## Fixes to Common Issues
 
 - Access to 127.0.0.1 was denied ( visit `chrome://net-internals/#sockets` and `Flush socket pools` )
+
+## Updating scrape.py cookies (temporarily)
+
+1. Navigate to MyBU Student --> Class Information --> Course Search
+2. Inspect and open network tab
+3. Click the "Search" button and right click on the request and copy as cURL
+4. Paste it into a cURL to Python converter like [Curl Converter](https://curlconverter.com/) to get the Python request
+5. Copy result into scrape.py where necessary
 
 ## Resources
 
