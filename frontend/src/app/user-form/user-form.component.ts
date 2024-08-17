@@ -4,48 +4,51 @@ import { FormService } from '../form.service';
 @Component({
   selector: 'app-user-form',
   template: `
-    <div class="form-container">
-      <form (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input type="text" id="name" [(ngModel)]="formData.name" name="name" required>
-        </div>
+    <div class="wrapper">
+      <div class="form-container">
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" [(ngModel)]="formData.name" name="name" required>
+          </div>
 
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="email" [(ngModel)]="formData.email" name="email" required>
-        </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" [(ngModel)]="formData.email" name="email" required>
+          </div>
 
-        <div class="form-group">
-          <label for="term">Term:</label>
-          <select [(ngModel)]="formData.term" name="term">
-            <option value="Fall 2024">Fall 2024</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label for="term">Term:</label>
+            <select [(ngModel)]="formData.term" name="term">
+              <option value="Fall 2024">Fall 2024</option>
+            </select>
+          </div>
 
-        <div class="form-group">
-          <label for="numCredits">Number of HUB credits desired:</label>
-          <select [(ngModel)]="formData.numCredits" name="numCredits">
-            @for(val of creditOptions; track val) {
-              <option value={{val}}>{{ val }}</option>
-            }
-          </select>
-        </div>
+          <div class="form-group">
+            <label for="numCredits">Number of HUB credits desired:</label>
+            <select [(ngModel)]="formData.numCredits" name="numCredits">
+              @for(val of creditOptions; track val) {
+                <option value={{val}}>{{ val }}</option>
+              }
+            </select>
+          </div>
 
-        <div class="form-group">
-          <label for="desiredHubs">Choose the HUBs you need:</label>
-          <select multiple [(ngModel)]="formData.desiredHubs" name="desiredHubs">
-            @for(hub of hubOptions; track hub[0]) {
-              <option value={{hub[1]}}>{{ hub[0] }}</option>
-            }
-          </select>
-        </div>
+          <div class="form-group">
+            <label for="desiredHubs">Choose the HUBs you need:</label>
+            <select multiple [(ngModel)]="formData.desiredHubs" name="desiredHubs">
+              @for(hub of hubOptions; track hub[0]) {
+                <option value={{hub[1]}}>{{ hub[0] }}</option>
+              }
+            </select>
+          </div>
 
-        <button type="submit" class="submit-button">Submit</button>
-      </form>
+          <button type="submit" class="submit-button">Submit</button>
+        </form>
+      </div>
+
     </div>
   `,
-  styleUrls: ['./user-form.component.css']
+  styleUrls: ['./user-form.component.css', ]
 })
 export class UserFormComponent {
   @Output() formSubmitted = new EventEmitter<boolean>();  // New EventEmitter to notify form submission
@@ -83,14 +86,16 @@ export class UserFormComponent {
   // 'Philosophical Inquiry', 'Quantitative Reasoning I', 'Quantitative Reasoning II', 'Research and Information', 'Scientific Inquiry I',
   // 'Scientific Inquiry II', 'Teamwork/Collaboration', 'Writing, Research, Inquiry', 'Writing-Intensive Course'];
 
-  // converts form response hubs to binary hub string
+  selectedCourseIds: string[] = [];  // Holds the course IDs after form submission
+
   convertHubsToString() {
+    let desiredHubsIndex = 0; // using this seems a bit more efficient than using includes in the if statement
     console.log("desired hubs array originally", this.formData.desiredHubs)
     let hubString = ""
     for(let i = 0; i < this.hubOptions.length; i++) {
-      if (this.formData.desiredHubs.includes(this.hubOptions[i][1])) {
+      if (this.hubOptions[i][1] == this.formData.desiredHubs[desiredHubsIndex]) { // if (this.formData.desiredHubs.includes(this.hubOptions[i][1])) {
         hubString += '1';
-        console.log(this.hubOptions[i][1])
+        desiredHubsIndex += 1;
       } else {
           hubString += '0';
       } 
@@ -119,8 +124,11 @@ export class UserFormComponent {
     console.log(this.formData)
     this.formService.submitForm(this.formData)
       .subscribe(response => {
-        console.log('Server response:', response); // probably figure out how to send that data to decode that and then send it to the frontend where it thanks you for submitting
         this.formSubmitted.emit(true);  // Emit the event when the form is submitted
+        console.log('Server response:', response); // probably figure out how to send that data to decode that and then send it to the frontend where it thanks you for submitting
+        let data = response.data;
+        // now take the "Selected Course Ids" [] amd pass that data through another component in the frontend to get each 
+        this.selectedCourseIds = response.data.courseIds; // TODO: check if this is the correct attribute 
       }, error => {
         console.error('Error:', error);
       });

@@ -23,6 +23,12 @@ export class FormService {
 
   constructor(private http: HttpClient) { }
 
+  // TODO: add support for this route in the app.py
+  getCourseDetails(courseIds: string[]): Observable<any> {
+    // Assuming you have an API endpoint that accepts an array of course IDs
+    return this.http.post('/api/courses/details', { ids: courseIds }); // TODO: should probably change this from post to get
+  }
+  
   submitForm(data: any): Observable<any> {
     const apiSolveUrl = `${this.apiSolveBaseUrl}/${data.numCredits}/${data.desiredHubs}`;
     return this.http.get<any>(apiSolveUrl);
