@@ -85,17 +85,17 @@ export class UserFormComponent {
 
   // converts form response hubs to binary hub string
   convertHubsToString() {
+    console.log("desired hubs array originally", this.formData.desiredHubs)
     let hubString = ""
-    let desiredHubsIndex = 0
     for(let i = 0; i < this.hubOptions.length; i++) {
-      if (this.hubOptions[i][1] == this.formData.desiredHubs[desiredHubsIndex]) {
+      if (this.formData.desiredHubs.includes(this.hubOptions[i][1])) {
         hubString += '1';
-        desiredHubsIndex += 1;
+        console.log(this.hubOptions[i][1])
       } else {
-        hubString += '0';
-      }
-      this.formData.desiredHubs = hubString
+          hubString += '0';
+      } 
     }
+    this.formData.desiredHubs = hubString
   }
 
   // TODO: converts get request response binary hub string to hubs
@@ -116,6 +116,7 @@ export class UserFormComponent {
 
   onSubmit() {
     this.convertHubsToString()
+    console.log(this.formData)
     this.formService.submitForm(this.formData)
       .subscribe(response => {
         console.log('Server response:', response); // probably figure out how to send that data to decode that and then send it to the frontend where it thanks you for submitting
