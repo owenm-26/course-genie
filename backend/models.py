@@ -4,13 +4,13 @@ class Course(db.Model):
     __tablename__ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
-    course_name = db.Column(db.String(80), nullable=False)
+    course_name = db.Column(db.String(255), nullable=False)
     catalog_number = db.Column(db.String(80), nullable=False)
     class_section = db.Column(db.String(80), nullable=False)
     start_time = db.Column(db.String(80), nullable=False)
     end_time = db.Column(db.String(80), nullable=False)
     class_room = db.Column(db.String(80), nullable = True)
-    instructor = db.Column(db.String(80), nullable = False)
+    instructor = db.Column(db.String(255), nullable = False)
     credits = db.Column(db.Integer, nullable=False)
 
     lab_parent_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
