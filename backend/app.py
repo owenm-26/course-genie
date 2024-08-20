@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:4200"}})
 db.init_app(app)
 migrate.init_app(app, db)
 
@@ -78,6 +78,19 @@ def solve(maxCredits, hubString):
     courses = see_table('courses').get_json()
     return solver(maxCredits=maxCredits, hubString=hubString, courses=courses)
 
+# actual api route for setting up all the backend and database support and then solving
+@app.route('/api/setupsolve/<int:maxCredits>/<hubString>')
+def setupsolve(maxCredits, hubString):
+    try:
+        write_courses()
+        create_tables()
+        # other setup steps necessary for the backend before calling solve
+        return jsonify({"status": "success", "data": solve(maxCredits, hubString)}), 200
+    except Exception as e:
+        app.logger.error(f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# check the database URI connection
 @app.route('/health')
 def health():
     return f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}"
