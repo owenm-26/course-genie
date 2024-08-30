@@ -51,7 +51,8 @@ import { FormService } from '../form.service';
   styleUrls: ['./user-form.component.css', ]
 })
 export class UserFormComponent {
-  @Output() formSubmitted = new EventEmitter<boolean>();  // New EventEmitter to notify form submission
+  // @Output() formSubmitted = new EventEmitter<boolean>();  // New EventEmitter to notify form submission
+  @Output() formSubmitted = new EventEmitter<{ submitted: boolean, selectedCourseIds: number[] }>();
 
   formData = { 
     name: '', 
@@ -86,7 +87,7 @@ export class UserFormComponent {
   // 'Philosophical Inquiry', 'Quantitative Reasoning I', 'Quantitative Reasoning II', 'Research and Information', 'Scientific Inquiry I',
   // 'Scientific Inquiry II', 'Teamwork/Collaboration', 'Writing, Research, Inquiry', 'Writing-Intensive Course'];
 
-  selectedCourseIds: string[] = [];  // Holds the course IDs after form submission
+  selectedCourseIds: number[] = [];  // Holds the course IDs after form submission
 
   convertHubsToString() {
     let desiredHubsIndex = 0; // using this seems a bit more efficient than using includes in the if statement
@@ -120,15 +121,29 @@ export class UserFormComponent {
   constructor(private formService: FormService) {}
 
   onSubmit() {
+    // indicate form submission and loading
+    const elements = document.getElementsByClassName('submit-button') as HTMLCollectionOf<HTMLElement>;
+    for (let i = 0; i < elements.length; i++) {
+      elements[i].style.backgroundColor = '#0056b3';
+      elements[i].style.pointerEvents = 'none'; /* Prevents clicking */
+      elements[i].style.opacity = '0.5';         /* Makes it look disabled */
+      elements[i].style.cursor = 'not-allowed';  /* Changes the cursor to indicate the button is not clickable */
+      elements[i].style.cursor = 'none';  /* Changes the cursor to indicate the button is not clickable */
+      elements[i].style.cursor = 'progress';  /* Changes the cursor to indicate the button is not clickable */
+    }
+    document.body.style.cursor = 'progress';  /* Changes the cursor to indicate loading */
+
     this.convertHubsToString()
     console.log(this.formData)
     this.formService.submitForm(this.formData)
       .subscribe(response => {
-        this.formSubmitted.emit(true);  // Emit the event when the form is submitted
         console.log('Server response:', response); // probably figure out how to send that data to decode that and then send it to the frontend where it thanks you for submitting
         let data = response.data;
-        // now take the "Selected Course Ids" [] amd pass that data through another component in the frontend to get each 
-        this.selectedCourseIds = response.data.courseIds; // TODO: check if this is the correct attribute 
+        // now take the "Selected Course Ids" [] and pass that data through another component in the frontend to get each 
+        this.selectedCourseIds = response.data["Selected Course Ids"]; // this gets the courseids!
+        console.log("selectedCourseIDs once again are:", this.selectedCourseIds)
+        this.formSubmitted.emit({submitted: true, selectedCourseIds: this.selectedCourseIds});  // Emit the event when the form is submitted
+        document.body.style.cursor = 'default';
       }, error => {
         console.error('Error:', error);
       });

@@ -18,7 +18,7 @@ export class FormService {
 
   // TODO: for the apiUrl it would be best practice to get at least the port from the env file probably?
 
-  private apiUrl = 'http://localhost:8000/api/form'; // original file submission api call
+  private apiUrl = 'http://localhost:8000/api'; // original file submission api call
   private apiSolveBaseUrl = 'http://localhost:8000/api/setupsolve'; // api url to set up backend infrastructure and solve
 
   constructor(private http: HttpClient) { }
@@ -26,12 +26,13 @@ export class FormService {
   // TODO: add support for this route in the app.py
   getCourseDetails(courseIds: string[]): Observable<any> {
     // Assuming you have an API endpoint that accepts an array of course IDs
-    return this.http.post('/api/courses/details', { ids: courseIds }); // TODO: should probably change this from post to get
+    const apiCourseDetailsUrl = `${this.apiUrl}/courses/details/${courseIds}`
+    return this.http.get<any>(apiCourseDetailsUrl);
+    // return this.http.get<any>('/api/courses/details', { ids: courseIds }); // TODO: should probably change this from post to get
   }
   
   submitForm(data: any): Observable<any> {
     const apiSolveUrl = `${this.apiSolveBaseUrl}/${data.numCredits}/${data.desiredHubs}`;
     return this.http.get<any>(apiSolveUrl);
-    // return this.http.post(this.apiUrl, data)
   }
 }
