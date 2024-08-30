@@ -3,7 +3,21 @@ import { FormService } from '../form.service';
 
 @Component({
   selector: 'app-course-results',
-  templateUrl: './course-results.component.html',
+  template: `
+  <div *ngIf="courseDetails.length > 0">
+    <h2>Course Details</h2>
+    <div *ngFor="let course of courseDetails">
+      <h3>{{ course.course_name }}</h3>
+      <p>{{ course.class_room }}</p>
+      <p>{{ course.start_time }}</p>
+      <!-- Add more fields as necessary -->
+    </div>
+  </div>
+
+  <div *ngIf="courseDetails.length === 0">
+    <p>No course details available.</p>
+  </div>
+  `,
   styleUrls: ['./course-results.component.css']
 })
 export class CourseResultsComponent implements OnInit {

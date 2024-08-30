@@ -73,6 +73,32 @@ def see_table(table):
 
     return jsonify(data)
 
+# gives course details from database
+def see_course(table, course_ids):
+    inspector = inspect(db.engine)
+    table = "courses"
+    # Check if the table exists
+    if table not in inspector.get_table_names():
+        abort(404, description=f"Table '{table}' not found")
+
+    # Query the table
+    try:
+        query = text(f"SELECT * FROM {table} WHERE id = ANY(:course_ids)")
+        # Convert course_ids to a tuple
+        result = db.session.execute(query, {"course_ids": course_ids})
+
+        # Print the query and parameters for debugging
+        print("Executing query:", query)
+        print("With parameters:", {"course_ids": course_ids})
+
+        columns = result.keys()
+        data = [dict(zip(columns, row)) for row in result.fetchall()]
+    except Exception as e:
+        abort(500, description=f"Error querying table '{table}': {str(e)}")
+
+    return data
+
+
 @app.route('/solve/<int:maxCredits>/<hubString>')
 def solve(maxCredits, hubString):
     courses = see_table('courses').get_json()
@@ -89,18 +115,35 @@ def setupsolve(maxCredits, hubString):
     except Exception as e:
         app.logger.error(f"Error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+# route to return info about the courses selected by solver
+@app.route('/api/courses/details/<courseIds>')
+def course_details(courseIds):
+    try:
+        print("course ids", courseIds, "\n\n")
+        course_id_arr = list(map(int, courseIds.split(',')))
+        print("now in array form", course_id_arr)
+        # return "currently testing"
+        response = see_course("courses", course_ids=course_id_arr)
+        print("response from seeing courses", response)
+        data = response
+        return jsonify({"status": "success", "data": data}), 200
+    except Exception as e:
+        app.logger.error(f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # check the database URI connection
 @app.route('/health')
 def health():
     return f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}"
 
-@app.route('/api/form', methods=['POST'])
-def handle_form():
-    data = request.get_json()
-    # Process the data
-    print("==============>", data)
-    return jsonify({"status": "success", "data": data})
+# # test form post ability
+# @app.route('/api/form', methods=['POST'])
+# def handle_form():
+#     data = request.get_json()
+#     # Process the data
+#     print("==============>", data)
+#     return jsonify({"status": "success", "data": data})
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv('BACKEND_PORT'))
