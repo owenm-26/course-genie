@@ -17,7 +17,6 @@ interface FormData {
 export class FormService {
 
   // TODO: for the apiUrl it would be best practice to get at least the port from the env file probably?
-
   private apiUrl = 'http://localhost:8000/api'; // original file submission api call
   private apiSolveBaseUrl = 'http://localhost:8000/api/setupsolve'; // api url to set up backend infrastructure and solve
 

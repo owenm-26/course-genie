@@ -132,7 +132,7 @@ export class UserFormComponent {
       elements[i].style.cursor = 'progress';  /* Changes the cursor to indicate the button is not clickable */
     }
     document.body.style.cursor = 'progress';  /* Changes the cursor to indicate loading */
-
+    
     this.convertHubsToString()
     console.log(this.formData)
     this.formService.submitForm(this.formData)

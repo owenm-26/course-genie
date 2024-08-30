@@ -21,7 +21,7 @@ import { CourseResultsComponent } from './course-results/course-results.componen
 })
 export class AppComponent {
   formSubmitted = false;
-  selectedCourseIds: string[] = [];  // Holds the course IDs after form submission (TODO: pass data back from user-form.component)
+  selectedCourseIds: string[] = [];  // Holds the course IDs after form submission (pass data back from user-form.component)
 
   onFormSubmitted(event:{ submitted: boolean, selectedCourseIds: number[]}) {
     this.formSubmitted = event.submitted;
