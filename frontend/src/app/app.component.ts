@@ -13,7 +13,7 @@ import { CourseResultsComponent } from './course-results/course-results.componen
       </div>
     }
     @else {
-      <app-user-form (formSubmitted)="onFormSubmitted($event)" />
+      <app-user-form (formSubmitted)="onFormSubmitted($event)"/>
     }
     `,
   // imports: [UserFormComponent]
@@ -23,8 +23,10 @@ export class AppComponent {
   formSubmitted = false;
   selectedCourseIds: string[] = [];  // Holds the course IDs after form submission (pass data back from user-form.component)
 
-  onFormSubmitted(submitted: boolean) {
-    this.formSubmitted = submitted;
+  onFormSubmitted(event:{ submitted: boolean, selectedCourseIds: number[]}) {
+    this.formSubmitted = event.submitted;
+    this.selectedCourseIds = event.selectedCourseIds.map(String)
     console.log(this.formSubmitted)
+    console.log(this.selectedCourseIds)
   }
 }
