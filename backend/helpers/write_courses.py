@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from sqlalchemy import null
+from sqlalchemy import null, text
 from app import db, app  
 from models import HubCredits, Course, Schedule
-from helpers.scrape import fetch_and_write_response
+# from helpers.scrape import fetch_and_write_response
 from datetime import datetime
+
 
 # helper to map hub credits
 def map_hub_credits(crse_attr_value):
@@ -112,8 +113,16 @@ def write_courses(courses):
 
     with app.app_context():
         # start fresh
-        db.drop_all()
+        db.session.execute(text('DROP TABLE IF EXISTS course CASCADE'))
+        # db.session.execute(text('DROP TABLE IF EXISTS course CASCADE'))
+        # db.session.execute(text('DROP TABLE IF EXISTS hub_credits CASCADE'))
+        # db.session.execute(text('DROP TABLE IF EXISTS schedule CASCADE'))
+        # db.session.execute(text('DROP TABLE IF EXISTS schedule CASCADE'))
+        # db.session.execute(text('DROP TABLE IF EXISTS schedule CASCADE'))
+        # db.session.execute(text('DROP TABLE IF EXISTS schedule CASCADE'))
+        
         db.create_all()
+
         skipped_courses = 0
         
         for course in courses:
@@ -198,7 +207,7 @@ def write_courses(courses):
                 hub_credits_id=hub_credit_instance.id,
                 credits=credits
             )
-            if course_instance.hub_credits_id != null:
+            if course_instance.hub_credits_id is not None:
                 course_instances.append(course_instance)
 
         try:
@@ -212,12 +221,14 @@ def write_courses(courses):
 
 
 def main():
-    response = fetch_and_write_response()
-    if response["status"] == 200:
-        result = write_courses(response["body"])
-        print('result', result)
-    else:
-        print('ERROR:', response["status"], response["body"])
+    # from newScrape import scraper
+    # response = scraper()
+    # if response["status"] == 200:
+    #     result = write_courses(response["body"])
+    #     print('result', result)
+    # else:
+    #     print('ERROR:', response["status"], response["body"])
+    pass
 
 if __name__ == '__main__':
     with app.app_context():
