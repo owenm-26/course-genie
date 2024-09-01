@@ -6,7 +6,6 @@ import os
 from flask_migrate import Migrate
 from flask_cors import CORS
 
-from helpers.scrape import fetch_and_write_response
 from helpers.algorithm import solver
 
 # Initialize SQLAlchemy and Migrate globally
@@ -41,15 +40,18 @@ def create_tables():
 
 @app.route('/scrape')
 def scrape_courses():
-    response = fetch_and_write_response()
+    from helpers.newScrape import scraper
+    response = scraper()
     return f'Did it work? {response["status"]}{response["body"]}'
 
 @app.route('/write')
 def write_courses():
     from helpers.write_courses import write_courses as wc
+    from helpers.newScrape import scraper
     with app.app_context():
-        result = fetch_and_write_response()
+        result = scraper()
         if result['status'] == 200:
+            print(result['body'])
             return wc(result["body"])
         else:
             return 'ERROR SCRAPING'
