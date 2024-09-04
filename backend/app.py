@@ -42,7 +42,7 @@ def create_tables():
 def scrape_courses():
     from helpers.newScrape import scraper
     response = scraper()
-    return f'Did it work? {response["status"]}{response["body"]}'
+    return f'Did it work? {response["status"]}\n\n{response["body"]}'
 
 @app.route('/write')
 def write_courses():
@@ -51,7 +51,7 @@ def write_courses():
     with app.app_context():
         result = scraper()
         if result['status'] == 200:
-            print(result['body'])
+            # print(result['body'])
             return wc(result["body"])
         else:
             return 'ERROR SCRAPING'
