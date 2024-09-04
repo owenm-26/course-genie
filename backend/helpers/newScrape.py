@@ -12,7 +12,7 @@ def scraper():
     
     # Step 1: Set up Selenium with headless mode
     options = Options()
-    options.headless = True  # Run in headless mode (no GUI)
+    options.add_argument('--headless=new')
     service = Service('/Users/owenmariani/Downloads/chromedriver-mac-arm64/chromedriver')
     driver = webdriver.Chrome(service=service, options=options)
 
@@ -42,7 +42,7 @@ def scraper():
     
     def duo_mobile():
         #click login button
-        print('DUO MOBILE BLOCKED. Please open your app and approve.')
+        print('******DUO MOBILE BLOCKED. Please open your app and approve.******')
         button = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.ID, "trust-browser-button"))
         )
@@ -78,7 +78,7 @@ def scraper():
     session_cookies = {cookie['name']: cookie['value'] for cookie in cookies}
 
     # Step 4: Use the cookies in requests
-    api_url = "https://mybustudent.bu.edu/psc/BUPRD/EMPLOYEE/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?institution=BU001&term=2248&date_from=&date_thru=&subject=&subject_like=&catalog_nbr=&start_time_equals=&start_time_ge=&end_time_equals=&end_time_le=&days=&campus=&location=&x_acad_career=&acad_group=BU1&rqmnt_designtn=&instruction_mode=&keyword=&class_nbr=&acad_org=&enrl_stat=O&crse_attr=&crse_attr_value=&instructor_name=&instr_first_name=&session_code=&units=&trigger_search=&page=1"
+    api_url = "https://mybustudent.bu.edu/psc/BUPRD/EMPLOYEE/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?institution=BU001&term=2248&date_from=&date_thru=&subject=&subject_like=&catalog_nbr=&start_time_equals=&start_time_ge=&end_time_equals=&end_time_le=&days=&campus=&location=&x_acad_career=&acad_group=BU1&rqmnt_designtn=&instruction_mode=&keyword=&class_nbr=&acad_org=&enrl_stat=O&crse_attr=&crse_attr_value=&instructor_name=&instr_first_name=&session_code=&units=&trigger_search="
 
     headers = {
         'Accept-Language': 'en-US,en;q=0.9',
@@ -94,19 +94,57 @@ def scraper():
         'sec-ch-ua-platform': '"macOS"',
     }
 
-    # Send the request with cookies and headers
-    response = requests.get(api_url, headers=headers, cookies=session_cookies)
+    def fetch_all_pages(api_url, headers, session_cookies):
+        all_data = []
+        page = 1
+        while True:
+            # Update the API URL with the current page number
+            paged_url = api_url + f"&page={page}"
+            print(f"Fetching page {page}...")
+
+            # Send the request with cookies and headers
+            response = requests.get(paged_url, headers=headers, cookies=session_cookies)
+            
+            if response == []:
+                print(f"Failed to retrieve data for page {page}: {response.status_code}")
+                break
+
+            # Parse the JSON response
+            data = response.json()
+
+            if not data:  # If the data is empty, break the loop
+                print(f"No more data available. Stopping at page {page}.")
+                break
+            
+            # Append the current page's data to the all_data list
+            all_data.extend(data)
+            print(all_data[-1])
+            
+            # Check for a condition to stop the loop (if applicable)
+            # If the API returns something indicating the last page, check for it here
+            # Example: if data contains a 'has_more' field indicating more pages, you can check it.
+            # if not data.get('has_more', True):
+            #     break
+            
+            # Increment the page number
+            page += 1
+    
+        return all_data
+
+    # # Send the request with cookies and headers
+    # response = requests.get(api_url, headers=headers, cookies=session_cookies)
+    all_data = fetch_all_pages(api_url, headers, session_cookies)
 
     # Clean up
     driver.quit()
 
     # Step 5: Handle the response
-    if response.status_code == 200:
-        data = response.json()
-        return {"status": 200, "body": data}
+    if all_data:
+        print('Data scraped successfully')
+        return {"status": 200, "body": all_data}
     else:
-        print(f"Failed to retrieve data: {response.status_code}")
-        return {"status": response.status_code, "body": "Failed"}
+        print(f"Failed to retrieve data")
+        return {"body": "Failed"}
 
 if __name__ == "__main__":
     scraper()
