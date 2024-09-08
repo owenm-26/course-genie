@@ -141,6 +141,10 @@ def write_courses(courses):
             lab_parent_id = None
             discussion_parent_id = None
 
+            if start_time == "Undecided" or end_time == "Undecided":
+                skipped_courses +=1
+                continue
+            
             if 'bldg_cd' in course['meetings'][0]:
                 class_room = course['meetings'][0]['bldg_cd'] + ' ' + course['meetings'][0]['room']
             else:
@@ -170,6 +174,7 @@ def write_courses(courses):
             # print(f'Creating course with hub_credits_id: {hub_credit_instance.id}')
 
             # CREATE SCHEDULE RELATION
+
             schedule_dict = map_schedule(course["meetings"][0]['days'])
 
             # Create a unique key for each HubCredits instance

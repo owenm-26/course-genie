@@ -12,7 +12,7 @@ def scraper():
     
     # Step 1: Set up Selenium with headless mode
     options = Options()
-    options.add_argument('--headless=new')
+    # options.add_argument('--headless=new')
     service = Service('/Users/owenmariani/Downloads/chromedriver-mac-arm64/chromedriver')
     driver = webdriver.Chrome(service=service, options=options)
 
