@@ -23,8 +23,6 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:4200"}})
 db.init_app(app)
 migrate.init_app(app, db)
 
-
-
 @app.route('/')
 def home():
     print(app.config['SQLALCHEMY_DATABASE_URI'])
@@ -37,6 +35,28 @@ def create_tables():
         return 'Tables created successfully!'
     except Exception as e:
         return f'Failed to create tables: {str(e)}'
+
+@app.route('/drop_tables')
+def drop_tables():
+    try:
+        with app.app_context():
+            db.metadata.reflect(bind=db.engine)
+            inspector = inspect(db.engine)
+            tables_before = inspector.get_table_names()
+            print("Tables before drop:", tables_before)
+            for tbl in reversed(db.metadata.sorted_tables):
+                tbl.drop()
+            
+            tables_after = inspector.get_table_names()
+            print("Tables after drop:", tables_after)
+            
+            if not tables_after:
+                return 'Tables dropped successfully!'
+            else:
+                return f'Some tables were not dropped: {tables_after}'
+    except Exception as e:
+        return f'Failed to drop tables: {str(e)}'
+
 
 @app.route('/scrape')
 def scrape_courses():
