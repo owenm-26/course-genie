@@ -130,8 +130,8 @@ def solve(maxCredits, hubString):
 @app.route('/api/setupsolve/<int:maxCredits>/<hubString>')
 def setupsolve(maxCredits, hubString):
     try:
-        write_courses()
-        create_tables()
+        # write_courses()
+        # create_tables()
         # other setup steps necessary for the backend before calling solve
         return jsonify({"status": "success", "data": solve(maxCredits, hubString)}), 200
     except Exception as e:

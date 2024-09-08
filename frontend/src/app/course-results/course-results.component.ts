@@ -9,8 +9,9 @@ import { FormService } from '../form.service';
     <div *ngFor="let course of courseDetails">
       <h3>{{ course.course_name }}</h3>
       <p>{{ course.class_room }}</p>
-      <p>{{ course.start_time }}</p>
-      <!-- Add more fields as necessary -->
+      <p>{{ course.start_time }} </p>
+      <p> {{ course.schedule_id }} </p>
+      <p> {{ course.schedule }} </p>
     </div>
   </div>
 
