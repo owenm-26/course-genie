@@ -24,6 +24,14 @@ A solution to minimizing the number of BU courses you have to take to fulfill HU
     pip install flask_cors
     npm install -g @angular/cli
 
+######
+
+    pip install flask-migrate
+    pip install selenium
+    pip install requests
+
+To get stable version of selenium's ChromeDriver go here: [GoogleChromeLabs](https://googlechromelabs.github.io/chrome-for-testing/). May then need to run the binary from Finder to grant your system permission to open it.
+
 ## Running code
 
 You must use two separate terminals so you can run the frontend in one and the backend in the other.

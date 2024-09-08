@@ -12,8 +12,14 @@ def scraper():
     
     # Step 1: Set up Selenium with headless mode
     options = Options()
+<<<<<<< Updated upstream
     # options.add_argument('--headless=new')
     service = Service('/Users/owenmariani/Downloads/chromedriver-mac-arm64/chromedriver')
+=======
+    options.add_argument('--headless=new')
+    user = os.getenv('USER')
+    service = Service(f'/Users/{user}/Downloads/chromedriver-mac-arm64/chromedriver')
+>>>>>>> Stashed changes
     driver = webdriver.Chrome(service=service, options=options)
 
     def login():
